@@ -55,6 +55,47 @@ const observer = new IntersectionObserver((entries) => {
 
 revealTargets.forEach(el => observer.observe(el));
 
+// ============ GALLERY CAROUSEL ============
+const track = document.getElementById('carouselTrack');
+if (track) {
+  const slides = Array.from(track.children);
+  const dotsWrap = document.getElementById('carouselDots');
+  const prevBtn = document.getElementById('carouselPrev');
+  const nextBtn = document.getElementById('carouselNext');
+
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.setAttribute('aria-label', `Ir a la foto ${i + 1}`);
+    if (i === 0) dot.classList.add('active');
+    dot.addEventListener('click', () => {
+      slides[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    });
+    dotsWrap.appendChild(dot);
+  });
+  const dots = Array.from(dotsWrap.children);
+
+  const scrollByOne = (dir) => {
+    const slide = slides[0];
+    const gap = parseFloat(getComputedStyle(track).gap) || 0;
+    const amount = (slide.getBoundingClientRect().width + gap) * dir;
+    track.scrollBy({ left: amount, behavior: 'smooth' });
+  };
+  prevBtn.addEventListener('click', () => scrollByOne(-1));
+  nextBtn.addEventListener('click', () => scrollByOne(1));
+
+  const slideObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+        const idx = slides.indexOf(entry.target);
+        dots.forEach(d => d.classList.remove('active'));
+        if (dots[idx]) dots[idx].classList.add('active');
+      }
+    });
+  }, { root: track, threshold: [0.6] });
+  slides.forEach(s => slideObserver.observe(s));
+}
+
 // ============ CARTA COMPLETA TOGGLE ============
 const cartaToggle = document.getElementById('cartaToggle');
 if (cartaToggle) {

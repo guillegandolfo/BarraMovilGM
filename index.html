@@ -94,14 +94,20 @@
     <p class="eyebrow center">Grandes momentos</p>
     <h2 class="center">Algunos de nuestros<br>grandes momentos</h2>
 
-    <div class="masonry">
-      <figure class="m-item m-tall reveal"><img src="images/equipo-bartenders.jpg" alt="Bartenders de Barra Móvil GM sonriendo detrás de la barra" loading="lazy"></figure>
-      <figure class="m-item reveal"><img src="images/bartender-preparando.jpg" alt="Bartender preparando un trago de autor" loading="lazy"></figure>
-      <figure class="m-item reveal"><img src="images/menu-pizarra.jpg" alt="Pizarra neón con la carta de tragos" loading="lazy"></figure>
-      <figure class="m-item m-wide reveal"><img src="images/fiesta-cumpleanos.jpg" alt="Barra móvil ambientando una fiesta de cumpleaños de noche" loading="lazy"></figure>
-      <figure class="m-item m-tall reveal"><img src="images/piscina-noche.jpg" alt="Barra móvil junto a una piscina iluminada de noche" loading="lazy"></figure>
-      <figure class="m-item reveal"><img src="images/lounge-hogar.jpg" alt="Barra móvil ambientando un living con chimenea" loading="lazy"></figure>
-      <figure class="m-item reveal"><img src="images/unidad-fusca.jpg" alt="Barra móvil Fusca rosa de noche" loading="lazy"></figure>
+    <div class="carousel reveal">
+      <div class="carousel-track" id="carouselTrack">
+        <figure class="carousel-slide"><img src="images/bartender-preparando.jpg" alt="Bartender preparando un trago de autor" loading="lazy"></figure>
+        <figure class="carousel-slide"><img src="images/menu-pizarra.jpg" alt="Pizarra neón con la carta de tragos" loading="lazy"></figure>
+        <figure class="carousel-slide"><img src="images/fiesta-cumpleanos.jpg" alt="Barra móvil ambientando una fiesta de cumpleaños de noche" loading="lazy"></figure>
+        <figure class="carousel-slide"><img src="images/piscina-noche.jpg" alt="Barra móvil junto a una piscina iluminada de noche" loading="lazy"></figure>
+        <figure class="carousel-slide"><img src="images/lounge-hogar.jpg" alt="Barra móvil ambientando un living con chimenea" loading="lazy"></figure>
+        <figure class="carousel-slide"><img src="images/unidad-fusca.jpg" alt="Barra móvil Fusca rosa de noche" loading="lazy"></figure>
+      </div>
+
+      <button type="button" class="carousel-arrow prev" id="carouselPrev" aria-label="Foto anterior">‹</button>
+      <button type="button" class="carousel-arrow next" id="carouselNext" aria-label="Foto siguiente">›</button>
+
+      <div class="carousel-dots" id="carouselDots"></div>
     </div>
 
     <a href="https://www.instagram.com/barramovilgrandesmomentos" target="_blank" rel="noopener" class="ig-link">
