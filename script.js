@@ -1,9 +1,7 @@
 // ============ PRELOADER ============
 window.addEventListener('load', () => {
   const pre = document.getElementById('preloader');
-  if (pre) {
-    setTimeout(() => pre.classList.add('done'), 250);
-  }
+  if (pre) setTimeout(() => pre.classList.add('done'), 300);
 });
 
 // ============ HEADER SCROLL STATE ============
@@ -12,7 +10,7 @@ const onScroll = () => {
   if (window.scrollY > 40) header.classList.add('scrolled');
   else header.classList.remove('scrolled');
 };
-window.addEventListener('scroll', onScroll);
+window.addEventListener('scroll', onScroll, { passive: true });
 onScroll();
 
 // ============ MOBILE MENU ============
@@ -33,12 +31,19 @@ nav.querySelectorAll('a').forEach(link => {
   });
 });
 
-// ============ SCROLL REVEAL ============
-const revealTargets = document.querySelectorAll(
-  '.card, .g-item, .unit-card, .step, .contact-text, .contact-form, .section h2, .section-lead'
-);
-revealTargets.forEach(el => el.classList.add('reveal'));
+// ============ SUBTLE HERO PARALLAX ============
+const heroBg = document.getElementById('heroBg');
+if (heroBg && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    if (y < window.innerHeight * 1.2) {
+      heroBg.style.transform = `translateY(${y * 0.15}px) scale(1.02)`;
+    }
+  }, { passive: true });
+}
 
+// ============ SCROLL REVEAL ============
+const revealTargets = document.querySelectorAll('.reveal');
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -46,32 +51,21 @@ const observer = new IntersectionObserver((entries) => {
       observer.unobserve(entry.target);
     }
   });
-}, { threshold: 0.15 });
+}, { threshold: 0.12 });
 
 revealTargets.forEach(el => observer.observe(el));
+
+// ============ CARTA COMPLETA TOGGLE ============
+const cartaToggle = document.getElementById('cartaToggle');
+if (cartaToggle) {
+  cartaToggle.addEventListener('click', () => {
+    const collapsibles = document.querySelectorAll('.menu-collapsible');
+    const expanding = !collapsibles[0].classList.contains('expanded');
+    collapsibles.forEach(el => el.classList.toggle('expanded', expanding));
+    cartaToggle.textContent = expanding ? 'Ver menos' : 'Ver carta completa';
+  });
+}
 
 // ============ FOOTER YEAR ============
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
-
-// ============ QUOTE FORM -> WHATSAPP ============
-const form = document.getElementById('quote-form');
-if (form) {
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const data = new FormData(form);
-    const nombre = data.get('nombre') || '';
-    const fecha = data.get('fecha') || 'a confirmar';
-    const evento = data.get('evento') || '';
-    const mensaje = data.get('mensaje') || '';
-
-    const text =
-      `Hola! Soy ${nombre}.\n` +
-      `Quiero cotizar la barra móvil para un evento de tipo: ${evento}.\n` +
-      `Fecha estimada: ${fecha}.\n` +
-      `Detalles: ${mensaje}`;
-
-    const url = `https://wa.me/59898281622?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank', 'noopener');
-  });
-}
