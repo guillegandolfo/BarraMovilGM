@@ -81,19 +81,56 @@ if (track) {
     const amount = (slide.getBoundingClientRect().width + gap) * dir;
     track.scrollBy({ left: amount, behavior: 'smooth' });
   };
-  prevBtn.addEventListener('click', () => scrollByOne(-1));
-  nextBtn.addEventListener('click', () => scrollByOne(1));
+  let activeIndex = 0;
+
+  const goTo = (index) => {
+    const target = slides[(index + slides.length) % slides.length];
+    target.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  };
+
+  prevBtn.addEventListener('click', () => { goTo(activeIndex - 1); restartAutoplay(); });
+  nextBtn.addEventListener('click', () => { goTo(activeIndex + 1); restartAutoplay(); });
 
   const slideObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
-        const idx = slides.indexOf(entry.target);
+        activeIndex = slides.indexOf(entry.target);
         dots.forEach(d => d.classList.remove('active'));
-        if (dots[idx]) dots[idx].classList.add('active');
+        if (dots[activeIndex]) dots[activeIndex].classList.add('active');
       }
     });
   }, { root: track, threshold: [0.6] });
   slides.forEach(s => slideObserver.observe(s));
+
+  // ---- Autoplay: advances every 4.5s, pauses on interaction / off-screen / hidden tab ----
+  const AUTOPLAY_MS = 4500;
+  let autoplayTimer = null;
+  const reduceMotion = !window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+
+  const stopAutoplay = () => { clearInterval(autoplayTimer); autoplayTimer = null; };
+  const startAutoplay = () => {
+    if (reduceMotion || autoplayTimer) return;
+    autoplayTimer = setInterval(() => goTo(activeIndex + 1), AUTOPLAY_MS);
+  };
+  function restartAutoplay() { stopAutoplay(); startAutoplay(); }
+
+  const carouselWrap = track.closest('.carousel');
+  ['pointerdown', 'wheel'].forEach(evt => {
+    track.addEventListener(evt, () => { stopAutoplay(); }, { passive: true });
+  });
+  carouselWrap.addEventListener('mouseenter', stopAutoplay);
+  carouselWrap.addEventListener('mouseleave', startAutoplay);
+  carouselWrap.addEventListener('touchend', () => setTimeout(startAutoplay, 2000), { passive: true });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopAutoplay(); else startAutoplay();
+  });
+
+  const visibilityObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) startAutoplay(); else stopAutoplay();
+    });
+  }, { threshold: 0.3 });
+  visibilityObserver.observe(carouselWrap);
 }
 
 // ============ CARTA COMPLETA TOGGLE ============
